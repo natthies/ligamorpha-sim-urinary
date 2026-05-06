@@ -1,0 +1,552 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Simulator Quiz CBT</title>
+  <style>
+    :root {
+      --bg: #eef2f6;
+      --panel: #ffffff;
+      --text: #18212f;
+      --muted: #667085;
+      --line: #d6dde8;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success-bg: #dcfce7;
+      --success-line: #22c55e;
+      --wrong-bg: #fee2e2;
+      --wrong-line: #ef4444;
+      --explain-bg: #fff7d6;
+      --shadow: 0 18px 45px rgba(24, 33, 47, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(120deg, rgba(37, 99, 235, 0.12), transparent 36%),
+        linear-gradient(260deg, rgba(20, 184, 166, 0.12), transparent 34%),
+        var(--bg);
+      padding: 20px;
+    }
+
+    .container {
+      width: min(940px, 100%);
+      margin: 24px auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .home {
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.12;
+    }
+
+    h2,
+    h3 {
+      margin-top: 0;
+    }
+
+    .subtitle {
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .topbar,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar {
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5e7eb;
+      margin-bottom: 22px;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #14b8a6);
+      transition: width 0.2s ease;
+    }
+
+    #question {
+      font-size: 22px;
+      line-height: 1.48;
+      margin-bottom: 18px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .options label {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #ffffff;
+      cursor: pointer;
+      line-height: 1.45;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+    }
+
+    .options label:hover {
+      border-color: var(--primary);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .options input {
+      margin-top: 3px;
+      accent-color: var(--primary);
+    }
+
+    .correct {
+      background: var(--success-bg) !important;
+      border-color: var(--success-line) !important;
+    }
+
+    .wrong {
+      background: var(--wrong-bg) !important;
+      border-color: var(--wrong-line) !important;
+    }
+
+    .explain {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-left: 5px solid #f59e0b;
+      border-radius: 8px;
+      background: var(--explain-bg);
+      line-height: 1.55;
+      white-space: pre-line;
+    }
+
+    .actions {
+      justify-content: space-between;
+      margin-top: 18px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 18px;
+      color: #ffffff;
+      background: var(--primary);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.16s ease, background 0.16s ease, transform 0.16s ease;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .secondary-btn {
+      color: var(--text);
+      background: #e5e7eb;
+    }
+
+    .secondary-btn:hover {
+      background: #d1d5db;
+    }
+
+    .result {
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .score-number {
+      margin: 14px 0;
+      color: var(--primary);
+      font-size: 48px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        margin: 12px auto;
+        padding: 18px;
+      }
+
+      .home {
+        min-height: 360px;
+      }
+
+      #question {
+        font-size: 19px;
+      }
+
+      .actions,
+      .button-row,
+      .button-row button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="home" class="container home">
+    <p class="eyebrow" id="quizLabel">Simulator CBT</p>
+    <h1 id="quizTitle">Template Quiz</h1>
+    <p class="subtitle" id="quizSubtitle">Ganti judul dan soal di file quiz-data-template.js</p>
+    <button type="button" id="startBtn">Start</button>
+  </main>
+
+  <section id="quizContainer" class="container" style="display: none;">
+    <div class="topbar">
+      <div class="chips">
+        <span class="chip" id="meta">Soal 1 / 1</span>
+        <span class="chip" id="scoreInfo">Score: 0</span>
+        <span class="chip" id="timerInfo">Timer: --:--</span>
+      </div>
+      <button class="secondary-btn" type="button" id="finishBtn">Finish</button>
+    </div>
+
+    <div class="progress" aria-hidden="true">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <h2 id="question"></h2>
+    <div id="options" class="options"></div>
+    <div id="explain" class="explain" style="display: none;"></div>
+
+    <div class="actions">
+      <button class="secondary-btn" type="button" id="backBtn">Back</button>
+      <div class="button-row">
+        <button class="secondary-btn" type="button" id="skipBtn">Skip</button>
+        <button type="button" id="nextBtn">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="./ub-ligamorpha-data.js"></script>
+  <script>
+    const config = window.QUIZ_CONFIG || {};
+    const questions = window.QUESTIONS || window.questions || [];
+
+    let current = 0;
+    let currentOptions = [];
+    let score = 0;
+    let timeLeft = Number(config.durationMinutes || 100) * 60;
+    let timerInterval = null;
+
+    const homeEl = document.getElementById("home");
+    const quizEl = document.getElementById("quizContainer");
+    const quizLabelEl = document.getElementById("quizLabel");
+    const quizTitleEl = document.getElementById("quizTitle");
+    const quizSubtitleEl = document.getElementById("quizSubtitle");
+    const metaEl = document.getElementById("meta");
+    const scoreInfoEl = document.getElementById("scoreInfo");
+    const timerInfoEl = document.getElementById("timerInfo");
+    const progressBarEl = document.getElementById("progressBar");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const explainEl = document.getElementById("explain");
+    const startBtn = document.getElementById("startBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
+    const skipBtn = document.getElementById("skipBtn");
+    const finishBtn = document.getElementById("finishBtn");
+
+    const userAnswers = questions.map(() => null);
+
+    quizLabelEl.innerText = config.label || "Simulator CBT";
+    quizTitleEl.innerText = config.title || "Template Quiz";
+    quizSubtitleEl.innerText = config.subtitle || "Ganti judul dan soal di file quiz-data-template.js";
+
+    startBtn.addEventListener("click", startQuiz);
+    nextBtn.addEventListener("click", nextQuestion);
+    backBtn.addEventListener("click", prevQuestion);
+    skipBtn.addEventListener("click", skipQuestion);
+    finishBtn.addEventListener("click", finishQuiz);
+
+    if (!questions.length) {
+      startBtn.disabled = true;
+      quizSubtitleEl.innerText = "Belum ada soal. Isi dulu array QUESTIONS di file data.";
+    }
+
+    function startQuiz() {
+      homeEl.style.display = "none";
+      quizEl.style.display = "block";
+      current = 0;
+      score = 0;
+      timeLeft = Number(config.durationMinutes || 100) * 60;
+      userAnswers.fill(null);
+      startTimer();
+      loadQuestion();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+
+        if (timeLeft <= 0) {
+          finishQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = String(Math.floor(Math.max(timeLeft, 0) / 60)).padStart(2, "0");
+      const seconds = String(Math.max(timeLeft, 0) % 60).padStart(2, "0");
+      timerInfoEl.innerText = "Timer: " + minutes + ":" + seconds;
+    }
+
+    function shuffleArray(array) {
+      if (config.shuffleOptions === false) return;
+
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function recalculateScore() {
+      score = userAnswers.reduce((total, answer, index) => {
+        return total + (answer === questions[index].answer ? 1 : 0);
+      }, 0);
+
+      scoreInfoEl.innerText = "Score: " + score;
+    }
+
+    function loadQuestion() {
+      const q = questions[current];
+      const answered = userAnswers[current] !== null;
+
+      explainEl.style.display = "none";
+      explainEl.innerText = "";
+      metaEl.innerText = "Soal " + (current + 1) + " / " + questions.length;
+      progressBarEl.style.width = (((current + 1) / questions.length) * 100) + "%";
+      questionEl.innerText = q.q;
+
+      currentOptions = q.options.map((opt, i) => ({
+        text: opt,
+        isCorrect: i === q.answer,
+        originalIndex: i
+      }));
+
+      shuffleArray(currentOptions);
+
+      optionsEl.replaceChildren();
+      currentOptions.forEach((opt, i) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        const text = document.createElement("span");
+
+        input.type = "radio";
+        input.name = "opt";
+        input.dataset.index = String(i);
+        text.innerText = String.fromCharCode(65 + i) + ". " + opt.text;
+
+        label.append(input, text);
+        optionsEl.append(label);
+      });
+
+      const radios = optionsEl.querySelectorAll('input[name="opt"]');
+      const labels = optionsEl.querySelectorAll("label");
+      const savedAnswer = userAnswers[current];
+
+      radios.forEach((radio) => {
+        radio.addEventListener("change", function () {
+          check(Number(this.dataset.index));
+        });
+      });
+
+      if (answered) {
+        showSavedAnswer(savedAnswer, radios, labels);
+      }
+
+      backBtn.disabled = current === 0;
+      nextBtn.disabled = !answered;
+      skipBtn.disabled = current === questions.length - 1;
+      recalculateScore();
+    }
+
+    function showSavedAnswer(savedAnswer, radios, labels) {
+      const selectedIndex = currentOptions.findIndex((opt) => opt.originalIndex === savedAnswer);
+
+      if (selectedIndex !== -1) {
+        radios[selectedIndex].checked = true;
+      }
+
+      labels.forEach((label, index) => {
+        const input = label.querySelector("input");
+        input.disabled = true;
+
+        if (currentOptions[index].isCorrect) {
+          label.classList.add("correct");
+        }
+
+        if (index === selectedIndex && !currentOptions[index].isCorrect) {
+          label.classList.add("wrong");
+        }
+      });
+
+      explainEl.style.display = "block";
+      explainEl.innerText = "Penjelasan: " + (questions[current].explain || "-");
+    }
+
+    function check(i) {
+      const labels = optionsEl.querySelectorAll("label");
+      const chosenOriginalIndex = currentOptions[i].originalIndex;
+
+      userAnswers[current] = chosenOriginalIndex;
+      nextBtn.disabled = false;
+
+      labels.forEach((label, index) => {
+        const input = label.querySelector("input");
+        input.disabled = true;
+
+        if (currentOptions[index].isCorrect) {
+          label.classList.add("correct");
+        }
+
+        if (index === i && !currentOptions[index].isCorrect) {
+          label.classList.add("wrong");
+        }
+      });
+
+      explainEl.style.display = "block";
+      explainEl.innerText = "Penjelasan: " + (questions[current].explain || "-");
+      recalculateScore();
+    }
+
+    function prevQuestion() {
+      if (current > 0) {
+        current--;
+        loadQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (userAnswers[current] === null) return;
+
+      if (current < questions.length - 1) {
+        current++;
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function skipQuestion() {
+      if (current < questions.length - 1) {
+        current++;
+        loadQuestion();
+      }
+    }
+
+    function finishQuiz() {
+      clearInterval(timerInterval);
+      recalculateScore();
+
+      const answeredCount = userAnswers.filter((answer) => answer !== null).length;
+      document.body.innerHTML = `
+        <main class="container result">
+          <div>
+            <p class="eyebrow">${config.label || "Simulator CBT"}</p>
+            <h1>Quiz Selesai</h1>
+            <div class="score-number">${score}/${questions.length}</div>
+            <p class="subtitle">Terjawab: ${answeredCount}/${questions.length}</p>
+            <button type="button" onclick="location.reload()">Restart</button>
+          </div>
+        </main>
+      `;
+    }
+  </script>
+</body>
+</html>
+
